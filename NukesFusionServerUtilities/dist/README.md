@@ -16,4 +16,5 @@ Upon activation, it will teleport you back to spawn and change your avatar to Po
 
 ## Footnotes
 
+- Icon credit: https://www.flaticon.com/free-icon/fusion_4708047?term=nuclear+fusion&page=1&position=1&origin=search&related_id=4708047
 - Made by `the_ultimatenuke` on Discord, or `The_UltimateNuke` on Fusion.
