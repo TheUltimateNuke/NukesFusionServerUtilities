@@ -71,7 +71,7 @@ public class PanicButton : Feature
         if (_secondsBetweenInputs <= Time.realtimeSinceStartup - _lastIncTime)
             _count = 0; // reset count if input is not spammed in _secondsBetweenInputs seconds
         
-        if (Player.LeftController?.GetSecondaryInteractionButtonDown() == true || UnityEngine.InputSystem.Keyboard.current.bKey.wasPressedThisFrame)
+        if (Player.LeftController?.GetBButtonDown() == true || UnityEngine.InputSystem.Keyboard.current?.bKey?.wasPressedThisFrame == true)
         {
             _count++;
             _lastIncTime = Time.realtimeSinceStartup;
