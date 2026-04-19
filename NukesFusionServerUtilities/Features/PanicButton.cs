@@ -61,7 +61,7 @@ public class PanicButton : Feature
         Notifier.Send(new Notification
         {
             Type = NotificationType.Success,
-            PopupLength = 5,
+            PopupLength = 2,
             Message = "Panic button triggered! You have been reset!"
         });
     }

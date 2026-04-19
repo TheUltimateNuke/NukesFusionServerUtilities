@@ -5,7 +5,7 @@
         <Summary>Some little additions to make navigating and managing Fusion servers a bit easier.</Summary>
         <Authors>The_UltimateNuke</Authors>
         <RepositoryUrl>https://github.com/TheUltimateNuke/NukesFusionServerUtilities</RepositoryUrl>
-        <Version>1.0.4</Version>
+        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyCompilationProps">
