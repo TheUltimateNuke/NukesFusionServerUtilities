@@ -33,12 +33,12 @@ public class PanicButton : Feature
         MelonEvents.OnUpdate.Subscribe(OnUpdate);
     }
 
-    protected override void SetupConfiguration(ref Page page)
+    protected override void SetupConfiguration(ref Page? page)
     {
         base.SetupConfiguration(ref page);
         
-        page.CreateBool("Fallback Avatar on Panic Button", Color.gray, PanicButtonResetAvatarPref.entry.Value, i => PanicButtonResetAvatarPref.entry.Value = i);
-        page.CreateInt("Panic Button Trigger Count", Color.gray, PanicButtonTriggerCountPref.entry.Value, 1, 2, 16, i => PanicButtonTriggerCountPref.entry.Value = i);
+        page?.CreateBool("Fallback Avatar on Panic Button", Color.gray, PanicButtonResetAvatarPref.entry.Value, i => PanicButtonResetAvatarPref.entry.Value = i);
+        page?.CreateInt("Panic Button Trigger Count", Color.gray, PanicButtonTriggerCountPref.entry.Value, 1, 2, 16, i => PanicButtonTriggerCountPref.entry.Value = i);
     }
 
     public override void Deinitialize()
