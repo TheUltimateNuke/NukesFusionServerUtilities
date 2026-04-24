@@ -1,4 +1,6 @@
 ﻿using BoneLib.BoneMenu;
+using LabFusion.Network;
+using LabFusion.Scene;
 using LabFusion.SDK.Modules;
 using MelonLoader;
 using NukesFusionServerUtilities;
@@ -34,5 +36,21 @@ public class Entrypoint : MelonMod
         ModuleManager.RegisterModule<Module>();
 
         Logger.Msg(System.ConsoleColor.Green, $"{MyModInfo.Name} v{MyModInfo.Version} initialized!");
+    }
+
+    public override void OnLateInitializeMelon()
+    {
+        base.OnLateInitializeMelon();
+
+#if DEBUG
+        FusionSceneManager.HookOnDelayedLevelLoad(() =>
+        {
+            var netLayer = NetworkLayer.GetLayer<SteamVRNetworkLayer>();
+            netLayer.LogIn();
+            if (NetworkInfo.HasServer)
+                NetworkHelper.Disconnect();
+            NetworkHelper.StartServer();
+        });
+#endif
     }
 }

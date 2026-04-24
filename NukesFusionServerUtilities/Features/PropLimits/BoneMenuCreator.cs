@@ -11,9 +11,15 @@ internal static class BoneMenuCreator
 
         page.CreateBool("Enabled", Color.yellow, Globals.Enabled.entry.Value,
             b => { Globals.Enabled.entry.Value = b; });
-        page.CreateBool("Limits apply to Owner perms", Color.yellow, Globals.ApplyToOwners.entry.Value,
-            b => Globals.ApplyToOwners.entry.Value = b);
-        page.CreateInt("Max spawns per player", Color.yellow, Globals.MaxSpawnsPerPlayer.entry.Value, 5, 5, 4995,
-            i => Globals.MaxSpawnsPerPlayer.entry.Value = i);
+        page.CreateBool("Allow despawn of others' spawns", Color.yellow, Globals.DespawnOthersSpawnables.entry.Value,
+            b => { Globals.DespawnOthersSpawnables.entry.Value = b; });
+        page.CreateBool("Allow despawn of others' spawns (Admin only)", Color.yellow,
+            Globals.DespawnOthersSpawnablesIfOp.entry.Value,
+            b => { Globals.DespawnOthersSpawnablesIfOp.entry.Value = b; });
+        page.CreateBool("Spawn limits apply to Operator perms or above", Color.yellow,
+            Globals.ApplyToOperators.entry.Value,
+            b => { Globals.ApplyToOperators.entry.Value = b; });
+        page.CreateInt("Max spawns per player", Color.yellow, Globals.MaxSpawnsPerPlayer.entry.Value, 10, 5, 500,
+            i => { Globals.MaxSpawnsPerPlayer.entry.Value = i; });
     }
 }

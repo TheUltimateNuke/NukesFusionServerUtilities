@@ -1,6 +1,6 @@
 using LabFusion.Entities;
 
-namespace NukesFusionServerUtilities.Features.SpawnerIdentification;
+namespace NukesFusionServerUtilities.Features.PropLimits;
 
 public class SpawnerIdentificationExtender(byte spawnerId) : IEntityExtender
 {

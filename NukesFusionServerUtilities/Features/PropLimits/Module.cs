@@ -3,14 +3,13 @@ using LabFusion.Network;
 using LabFusion.Player;
 using LabFusion.SDK.Metadata;
 using LabFusion.Utilities;
-using NukesFusionServerUtilities.Features.SpawnerIdentification;
 
 namespace NukesFusionServerUtilities.Features.PropLimits;
 
 public class Module : LabFusion.SDK.Modules.Module
 {
     public override string Name => "PropLimits";
-    public override string Author => "TheUltimateNuke";
+    public override string Author => "The_UltimateNuke";
 
     protected override void OnModuleRegistered()
     {
@@ -18,8 +17,7 @@ public class Module : LabFusion.SDK.Modules.Module
 
         MultiplayerHooking.OnPlayerJoined += MultiplayerHookingOnPlayerJoined;
         MultiplayerHooking.OnPlayerLeft += MultiplayerHookingOnPlayerLeft;
-        NetworkEntityManager.IDManager.OnEntityRegistered += IDManagerOnOnEntityRegistered;
-        NetworkEntityManager.IDManager.OnEntityUnregistered += IDManagerOnOnEntityUnregistered;
+        MultiplayerHooking.OnUpdate += MultiplayerHookingOnOnUpdate;
     }
 
     protected override void OnModuleUnregistered()
@@ -28,40 +26,32 @@ public class Module : LabFusion.SDK.Modules.Module
 
         MultiplayerHooking.OnPlayerJoined -= MultiplayerHookingOnPlayerJoined;
         MultiplayerHooking.OnPlayerLeft -= MultiplayerHookingOnPlayerLeft;
-        NetworkEntityManager.IDManager.OnEntityRegistered -= IDManagerOnOnEntityRegistered;
-        NetworkEntityManager.IDManager.OnEntityUnregistered -= IDManagerOnOnEntityUnregistered;
+        MultiplayerHooking.OnUpdate -= MultiplayerHookingOnOnUpdate;
     }
 
-    private void IDManagerOnOnEntityRegistered(NetworkEntity obj)
+    private void MultiplayerHookingOnOnUpdate()
     {
         if (!NetworkInfo.IsHost) return;
 
-        var spawnerIdExtender = obj.GetExtender<SpawnerIdentificationExtender>();
-        if (spawnerIdExtender == null) return;
+        foreach (var playerId in PlayerIDManager.PlayerIDs)
+        {
+            var netEnts = NetworkEntityManager.IDManager.RegisteredEntities.IDEntityLookup.Values.Where(ne =>
+                ne.Source == EntitySource.Player &&
+                ne.GetExtender<SpawnerIdentificationExtender>()?.SpawnerId == playerId);
+            var props = netEnts.Select(ne => ne.GetExtender<NetworkProp>())
+                .Where(np => np.MarrowEntity?.IsDespawned == false).ToList();
+            var preCount = props.Count;
 
-        var id = PlayerIDManager.GetPlayerID(spawnerIdExtender.SpawnerId);
-        if (id == null) return;
+            while (preCount > Globals.MaxSpawnsPerPlayer.entry.Value)
+            {
+                var toRemove = props.Last();
+                toRemove.MarrowEntity?.Despawn();
+                props.Remove(toRemove);
+                preCount = props.Count;
+            }
 
-        var metadata = id.Metadata.Metadata;
-        metadata.TryGetMetadata(Globals.SpawnsTrackerKey, out var count);
-        metadata.TrySetMetadata(Globals.SpawnsTrackerKey,
-            !string.IsNullOrWhiteSpace(count) ? (int.Parse(count) + 1).ToString() : "1");
-    }
-
-    private void IDManagerOnOnEntityUnregistered(NetworkEntity obj)
-    {
-        if (!NetworkInfo.IsHost) return;
-
-        var spawnerIdExtender = obj.GetExtender<SpawnerIdentificationExtender>();
-        if (spawnerIdExtender == null) return;
-
-        var id = PlayerIDManager.GetPlayerID(spawnerIdExtender.SpawnerId);
-        if (id == null) return;
-
-        var metadata = id.Metadata.Metadata;
-        metadata.TryGetMetadata(Globals.SpawnsTrackerKey, out var count);
-        metadata.TrySetMetadata(Globals.SpawnsTrackerKey,
-            !string.IsNullOrWhiteSpace(count) && int.Parse(count) - 1 >= 0 ? (int.Parse(count) - 1).ToString() : "0");
+            playerId.Metadata.Metadata.TrySetMetadata(Globals.SpawnsTrackerKey, props.Count.ToString());
+        }
     }
 
     private static void MultiplayerHookingOnPlayerJoined(PlayerID playerId)

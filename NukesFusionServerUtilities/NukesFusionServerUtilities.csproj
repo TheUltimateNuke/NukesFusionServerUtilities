@@ -5,7 +5,7 @@
         <Summary>Some little additions to make navigating and managing Fusion servers a bit easier.</Summary>
         <Authors>The_UltimateNuke</Authors>
         <RepositoryUrl>https://github.com/TheUltimateNuke/NukesFusionServerUtilities</RepositoryUrl>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyCompilationProps">
@@ -118,7 +118,6 @@ namespace $(RootNamespace)
     "dependencies": [
         "LavaGang-MelonLoader-0.7.2",
         "Lakatrazz-Fusion-1.14.1",
-        "minecartman010-Scene_Janitor-1.1.0",
         "bonelib-BoneLib-3.2.1"
     ]
 }
