@@ -25,7 +25,7 @@ public class Entrypoint : MelonMod
 
     public override void OnInitializeMelon()
     {
-        var bonePage = Page.Root.CreatePage(nameof(NukesFusionServerUtilities), Color.gray);
+        var bonePage = Page.Root.CreatePage(nameof(NukesFusionServerUtilities), Color.green);
 
         PanicButton.SetupConfiguration(bonePage);
         PanicButton.Initialize();
