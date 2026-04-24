@@ -1,18 +1,32 @@
 # NukesFusionServerUtilities
 
-This mod will contain small additions to make navigating and managing Fusion servers a bit easier. 
+This mod will contain small additions to make navigating and managing Fusion servers a bit easier.
 
-Currently, the mod only contains a "Panic Button" feature, described in the Features section below:
+The mod currently contains a Panic Button feature described below, as well as a spawn limiting system that only the host
+is required to have (also described below).
 
 ## Features
+
+### Prop Limits & Spawner Identification
+
+Attaches a metadata property to every player server-side to track how many network entities they've spawned. If this
+property exceeds a certain configurable value, it will prevent the player from spawning anything else.
+
+If this mod is also installed client-side, it will notify the player when the server considers this limit reached.
 
 ### Panic Button
 
 Meant to prevent chaotically laggy servers or stuck players in an emergency.
 
-Spam the secondary interaction button (or B on your keyboard) on your LEFT controller 10 times (by default; configurable) to activate.
+Spam the menu button on your LEFT controller (or B on your keyboard) 10 times (by default; configurable) to activate.
 
-Upon activation, it will teleport you back to spawn and change your avatar to Polyblank (toggleable). If you are the host of a Fusion server with [Scene Janitor](https://thunderstore.io/c/bonelab/p/minecartman010/Scene_Janitor/) installed, it will also reset the map using that mod (not required).
+Upon activation, it will teleport you back to spawn and change your avatar to Polyblank (toggleable). If you are the
+host of a Fusion server, you get the option of using SceneJanitor, a complete scene reload, or nothing to clean up the
+level on trigger.
+
+---
+
+*You can find all config options for each feature in the NukesFusionServerUtilities tab in the BoneMenu.*
 
 ## Footnotes
 

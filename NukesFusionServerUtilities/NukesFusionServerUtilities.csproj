@@ -72,6 +72,10 @@
             <Output TaskParameter="Lines" PropertyName="GameDir"/>
         </ReadLinesFromFile>
 
+        <PropertyGroup Condition="'$(GameDir)' == ''">
+            <GameDir>$(BONELAB_DIR)</GameDir>
+        </PropertyGroup>
+
         <!-- Copy essential files to game folder -->
         <Copy Condition="'$(GameDir)' != ''" SourceFiles="$(TargetPath)" DestinationFolder="$(GameDir)\Mods"/>
     </Target>
