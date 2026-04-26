@@ -4,8 +4,6 @@ using LabFusion.Marrow.Serialization;
 using LabFusion.Network;
 using LabFusion.Player;
 using LabFusion.Representation;
-using LabFusion.RPC;
-using LabFusion.UI.Popups;
 using MelonLoader;
 
 namespace NukesFusionServerUtilities.Features.PropLimits;
@@ -13,20 +11,17 @@ namespace NukesFusionServerUtilities.Features.PropLimits;
 [HarmonyPatch]
 internal static class Patches
 {
-    [Rpc(RelayType.ToTarget)]
-    private static void OnSpawnLimitReached(int limit)
+    private static void SendSpawnLimitReachedNotification(byte playerId, int limit)
     {
-        var notif = new Notification
+        if (!PlayerIDManager.HasPlayerID(playerId) || !NetworkInfo.IsHost) return;
+
+        var data = new SpawnLimitNotificationMessageData
         {
-            Title = "Spawnable Limit Reached!",
-            Type = NotificationType.ERROR,
-            Message =
-                $"Max spawnable limit of {limit} has been reached! Any exceeding spawnables will not be spawned or replicated for others!",
-            ShowPopup = true
+            Limit = limit
         };
 
-        var exists = Notifier.CurrentNotification?.Title.Text == notif.Title.Text;
-        if (!exists) Notifier.Send(notif);
+        MessageRelay.RelayModule<SpawnLimitNotificationMessage, SpawnLimitNotificationMessageData>(data,
+            new MessageRoute(playerId, NetworkChannel.Reliable));
     }
 
     [HarmonyPatch(typeof(SpawnRequestMessage), "OnHandleMessage")]
@@ -47,9 +42,9 @@ internal static class Patches
             return true;
 #if DEBUG
         Melon<Entrypoint>.Logger.Warning(
-            $"Blocking server spawn of {data.Barcode} because sender exceeded max spawn count of {Globals.MaxSpawnsPerPlayer.entry.Value}!");
+            $"Blocking server spawn of {data.Barcode} because sender ({(playerId.TryGetDisplayName(out var name) ? name : playerId)}) exceeded max spawn count of {Globals.MaxSpawnsPerPlayer.entry.Value}!");
 #endif
-        OnSpawnLimitReached(Globals.MaxSpawnsPerPlayer.entry.Value);
+        SendSpawnLimitReachedNotification(playerId, Globals.MaxSpawnsPerPlayer.entry.Value);
         return false;
     }
 

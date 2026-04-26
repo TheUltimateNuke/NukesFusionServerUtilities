@@ -1,7 +1,9 @@
 using LabFusion.Entities;
 using LabFusion.Network;
 using LabFusion.Player;
+using LabFusion.RPC;
 using LabFusion.SDK.Metadata;
+using LabFusion.SDK.Modules;
 using LabFusion.Utilities;
 
 namespace NukesFusionServerUtilities.Features.PropLimits;
@@ -14,6 +16,8 @@ public class Module : LabFusion.SDK.Modules.Module
     protected override void OnModuleRegistered()
     {
         base.OnModuleRegistered();
+
+        ModuleMessageManager.RegisterHandler<SpawnLimitNotificationMessage>();
 
         MultiplayerHooking.OnPlayerJoined += MultiplayerHookingOnPlayerJoined;
         MultiplayerHooking.OnPlayerLeft += MultiplayerHookingOnPlayerLeft;
@@ -45,7 +49,11 @@ public class Module : LabFusion.SDK.Modules.Module
             while (preCount > Globals.MaxSpawnsPerPlayer.entry.Value)
             {
                 var toRemove = props.Last();
-                toRemove.MarrowEntity?.Despawn();
+                NetworkAssetSpawner.Despawn(new NetworkAssetSpawner.DespawnRequestInfo
+                {
+                    DespawnEffect = false,
+                    EntityID = toRemove.NetworkEntity.ID
+                });
                 props.Remove(toRemove);
                 preCount = props.Count;
             }
