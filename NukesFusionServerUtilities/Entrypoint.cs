@@ -1,4 +1,4 @@
-﻿using BoneLib.BoneMenu;
+﻿using BoneLib;
 using LabFusion.Network;
 using LabFusion.Scene;
 using LabFusion.SDK.Modules;
@@ -8,6 +8,7 @@ using NukesFusionServerUtilities.Features;
 using NukesFusionServerUtilities.Features.PropLimits;
 using UnityEngine;
 using Module = NukesFusionServerUtilities.Features.PropLimits.Module;
+using Page = BoneLib.BoneMenu.Page;
 
 [assembly: MelonInfo(typeof(Entrypoint), MyModInfo.Name, MyModInfo.Version, MyModInfo.Author)]
 [assembly: MelonAdditionalDependencies("LabFusion", "BoneLib")]
@@ -21,13 +22,17 @@ public class Entrypoint : MelonMod
     public static readonly MelonPreferences_Category Category =
         MelonPreferences.CreateCategory(nameof(NukesFusionServerUtilities));
 
+    internal static ModPref<bool> StartServerOnLevelLoad = new(Category, nameof(StartServerOnLevelLoad), false);
+
     // Static mod accessors for easy cross-class usage
-    internal static HarmonyLib.Harmony StaticHarmonyInstance => Melon<Entrypoint>.Instance.HarmonyInstance;
     internal static MelonLogger.Instance Logger => Melon<Entrypoint>.Logger;
 
     public override void OnInitializeMelon()
     {
         var bonePage = Page.Root.CreatePage(nameof(NukesFusionServerUtilities), Color.green);
+
+        bonePage.CreateBool("Start Fusion server on level load", Color.cyan, StartServerOnLevelLoad.entry.Value,
+            b => StartServerOnLevelLoad.entry.Value = b);
 
         PanicButton.SetupConfiguration(bonePage);
         PanicButton.Initialize();
@@ -35,22 +40,24 @@ public class Entrypoint : MelonMod
         BoneMenuCreator.Create(bonePage);
         ModuleManager.RegisterModule<Module>();
 
+        StartFusionServerOnLevelLoad();
+
         Logger.Msg(System.ConsoleColor.Green, $"{MyModInfo.Name} v{MyModInfo.Version} initialized!");
     }
 
-    public override void OnLateInitializeMelon()
+    public static void StartFusionServerOnLevelLoad()
     {
-        base.OnLateInitializeMelon();
-
-#if DEBUG
         FusionSceneManager.HookOnDelayedLevelLoad(() =>
         {
-            var netLayer = NetworkLayer.GetLayer<SteamVRNetworkLayer>();
-            netLayer.LogIn();
-            if (NetworkInfo.HasServer)
-                NetworkHelper.Disconnect();
+            if (!StartServerOnLevelLoad.entry.Value) return;
+            if (NetworkInfo.HasServer) return;
+            if (!NetworkInfo.HasLayer)
+            {
+                var netLayer = NetworkLayer.GetLayer<SteamVRNetworkLayer>();
+                netLayer.LogIn();
+            }
+
             NetworkHelper.StartServer();
         });
-#endif
     }
 }
