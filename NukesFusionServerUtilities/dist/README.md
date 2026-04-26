@@ -12,7 +12,7 @@ is required to have (also described below).
 Attaches a metadata property to every player server-side to track how many network entities they've spawned. If this
 property exceeds a certain configurable value, it will prevent the player from spawning anything else.
 
-If this mod is also installed client-side, it will notify the player when the server considers this limit reached.
+**If this mod is also installed client-side, it will notify the player when the server considers this limit reached.**
 
 It also has a setting to disallow people from despawning others' spawnables.
 
